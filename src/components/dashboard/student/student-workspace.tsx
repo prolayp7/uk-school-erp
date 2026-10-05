@@ -1,4 +1,4 @@
-import { BookOpenText, CalendarDays, GraduationCap, ShieldCheck, Sparkles } from "lucide-react";
+import { BookOpenText, CalendarDays, ClipboardList, GraduationCap, ShieldCheck, Sparkles } from "lucide-react";
 
 import { KpiCard } from "@/components/dashboard/kpi-card";
 import { SectionCard } from "@/components/dashboard/section-card";
@@ -15,6 +15,12 @@ export type StudentWorkspaceData = {
   presentMarks?: number | null;
   yearGroup?: string | null;
   form?: string | null;
+  recentAttendance?: Array<{
+    attendanceCode: string;
+    markedAt: string;
+    session: { sessionDate: string; sessionType: string };
+    code: { description: string; markType: string };
+  }> | null;
 };
 
 function formatDate(value: string): string {
@@ -41,6 +47,7 @@ export function StudentWorkspace({
   presentMarks,
   yearGroup,
   form,
+  recentAttendance,
 }: StudentWorkspaceData) {
   const school = user.schools[0];
   const displayName = accountName(user.email);
@@ -123,7 +130,7 @@ export function StudentWorkspace({
           >
             <div className="space-y-3">
               <p className="rounded-lg border border-brand/20 bg-brand-tint px-3 py-2.5 text-sm text-foreground">
-                This workspace is intentionally kept at a summary level so student access remains safe and focused on your school information. Timetable, attendance, assignments and school notices should be viewed through the relevant student record workflows.
+                Your school record is limited to your own learning information. Attendance history below shows your most recent marks.
               </p>
               <div className="grid gap-2 sm:grid-cols-2">
                 <div className="rounded-lg border bg-muted/40 p-3">
@@ -159,6 +166,37 @@ export function StudentWorkspace({
             </div>
           </SectionCard>
         </div>
+
+        <SectionCard
+          icon={<ClipboardList className="h-5 w-5" />}
+          title="Recent attendance"
+          subtitle="Your latest attendance marks"
+        >
+          {recentAttendance === null || recentAttendance === undefined ? (
+            <p className="py-2 text-sm text-muted-foreground">Your attendance record is currently unavailable.</p>
+          ) : recentAttendance.length === 0 ? (
+            <p className="py-2 text-sm text-muted-foreground">No attendance marks have been recorded yet.</p>
+          ) : (
+            <div className="divide-y divide-border">
+              {recentAttendance.slice(0, 10).map((record, index) => (
+                <div key={`${record.session.sessionDate}-${record.session.sessionType}-${record.attendanceCode}-${index}`} className="flex flex-wrap items-center justify-between gap-2 py-2.5 text-sm">
+                  <div>
+                    <p className="font-medium text-foreground">{record.code.description}</p>
+                    <p className="text-xs text-muted-foreground">{record.session.sessionType} session</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <StatusPill tone={record.code.markType === "present" || record.code.markType === "late" ? "success" : "warning"}>
+                      {record.attendanceCode}
+                    </StatusPill>
+                    <time className="text-xs tabular-nums text-muted-foreground">
+                      {formatDate(record.session.sessionDate.slice(0, 10))}
+                    </time>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </SectionCard>
       </div>
     </AppShell>
   );

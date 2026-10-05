@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
+import { Users } from "lucide-react";
 
 import { KpiCard } from "@/components/dashboard/kpi-card";
 import { SectionCard } from "@/components/dashboard/section-card";
@@ -24,10 +25,23 @@ type ParentChildSummary = {
 	attendanceRate: number;
 	totalMarks: number;
 	presentMarks: number;
+	recentAttendance?: Array<{
+		attendanceCode: string;
+		markedAt: string;
+		session: { sessionDate: string; sessionType: string };
+		code: { description: string; markType: string };
+	}>;
 };
 
 function formatPercent(value: number): string {
 	return `${value.toFixed(1)}%`;
+}
+
+function formatAttendanceDate(value: string): string {
+	return new Intl.DateTimeFormat("en-GB", {
+		dateStyle: "medium",
+		timeZone: "UTC",
+	}).format(new Date(`${value.slice(0, 10)}T12:00:00Z`));
 }
 
 async function loadChildren(token: string): Promise<ParentChildSummary[]> {
@@ -35,6 +49,17 @@ async function loadChildren(token: string): Promise<ParentChildSummary[]> {
 		return await apiRequest<ParentChildSummary[]>("/erp/parent/children", {
 			headers: { Authorization: `Bearer ${token}` },
 		});
+	} catch {
+		return [];
+	}
+}
+
+async function loadChildAttendance(token: string, pupilId: string): Promise<NonNullable<ParentChildSummary["recentAttendance"]>> {
+	try {
+		return await apiRequest<NonNullable<ParentChildSummary["recentAttendance"]>>(
+			`/parent/children/${encodeURIComponent(pupilId)}/attendance`,
+			{ headers: { Authorization: `Bearer ${token}` } },
+		);
 	} catch {
 		return [];
 	}
@@ -53,8 +78,8 @@ function ParentPortalWorkspace({ user, linkedChildren }: { user: CurrentUser; li
 				role: "Parent / Carer",
 				initials: "PC",
 			}}
-			academicYear="2025–2026"
-			academicTerm="Autumn Term"
+			academicYear=""
+			academicTerm=""
 			schoolName={user.schools[0]?.name ?? "School workspace"}
 			schoolContext={user.schools[0]?.code ?? "School portal"}
 			systemStatusLabel="Parent portal active"
@@ -108,7 +133,7 @@ function ParentPortalWorkspace({ user, linkedChildren }: { user: CurrentUser; li
 					/>
 				</section>
 
-				<SectionCard icon={<span className="text-base">👨‍👩‍👧</span>} title="Your children" subtitle="The portal remains scoped to your linked pupils only">
+				<SectionCard icon={<Users className="h-5 w-5" />} title="Your children" subtitle="The portal remains scoped to your linked pupils only">
 					{linkedChildren.length === 0 ? (
 						<p className="rounded-lg border border-dashed border-border bg-muted/40 p-4 text-sm text-muted-foreground">
 							No linked children are currently available in the portal. Once the school grants access, this list will show attendance and key school information for each child.
@@ -145,6 +170,21 @@ function ParentPortalWorkspace({ user, linkedChildren }: { user: CurrentUser; li
 											<dd className="font-medium text-foreground">{child.presentMarks} / {child.totalMarks} marks</dd>
 										</div>
 									</dl>
+									<div className="mt-4 border-t border-border pt-3">
+										<h3 className="text-xs font-semibold text-foreground">Recent attendance updates</h3>
+										{child.recentAttendance?.some((record) => record.code.markType !== "present") ? (
+											<ul className="mt-2 space-y-2">
+												{child.recentAttendance.filter((record) => record.code.markType !== "present").slice(0, 3).map((record, index) => (
+													<li key={`${record.session.sessionDate}-${record.session.sessionType}-${record.attendanceCode}-${index}`} className="flex items-center justify-between gap-2 text-xs">
+														<span className="min-w-0 truncate text-muted-foreground">{record.code.description} · {formatAttendanceDate(record.session.sessionDate)}</span>
+														<StatusPill tone="warning">{record.attendanceCode}</StatusPill>
+													</li>
+												))}
+											</ul>
+										) : (
+											<p className="mt-2 text-xs text-muted-foreground">No recent absence or lateness marks.</p>
+										)}
+									</div>
 								</article>
 							))}
 						</div>
@@ -164,5 +204,9 @@ export default async function ParentCarerPortalPage() {
 	}
 
 	const children = await loadChildren(token);
-	return <ParentPortalWorkspace user={user} linkedChildren={children} />;
+	const linkedChildren = await Promise.all(children.map(async (child) => ({
+		...child,
+		recentAttendance: await loadChildAttendance(token, child.id),
+	})));
+	return <ParentPortalWorkspace user={user} linkedChildren={linkedChildren} />;
 }

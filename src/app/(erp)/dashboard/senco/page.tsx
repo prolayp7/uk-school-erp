@@ -29,7 +29,7 @@ export default async function SencoDashboardPage() {
   }
 
   const [pupilData, structure] = await Promise.all([
-    loadDashboardData<{ total: number }>("/erp/pupils", token),
+    loadDashboardData<{ total: number }>("/erp/pupils/count", token),
     loadDashboardData<{ currentAcademicYear: { code: string } | null }>("/erp/academic-structure", token),
   ]);
 

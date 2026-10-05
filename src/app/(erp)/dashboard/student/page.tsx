@@ -17,6 +17,16 @@ type StudentSummary = {
   presentMarks: number;
 };
 
+type StudentAttendance = {
+  pupilId: string | null;
+  items: Array<{
+    attendanceCode: string;
+    markedAt: string;
+    session: { sessionDate: string; sessionType: string };
+    code: { description: string; markType: string };
+  }>;
+};
+
 export const metadata: Metadata = {
   title: "Student Portal",
 };
@@ -41,6 +51,16 @@ async function loadStudentSummary(token: string): Promise<StudentSummary | null>
   }
 }
 
+async function loadStudentAttendance(token: string): Promise<StudentAttendance | null> {
+  try {
+    return await apiRequest<StudentAttendance>("/student/attendance", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch {
+    return null;
+  }
+}
+
 export default async function StudentDashboardPage() {
   const user = await requireAnyRole(["STUDENT"]);
   const token = (await cookies()).get("session_token")?.value;
@@ -50,9 +70,10 @@ export default async function StudentDashboardPage() {
     return <StudentWorkspace user={user} academicYear={null} today={today} attendanceRate={null} />;
   }
 
-  const [structure, studentSummary] = await Promise.all([
+  const [structure, studentSummary, attendance] = await Promise.all([
     loadAcademicStructure(token),
     loadStudentSummary(token),
+    loadStudentAttendance(token),
   ]);
 
   return (
@@ -65,6 +86,7 @@ export default async function StudentDashboardPage() {
       presentMarks={studentSummary?.presentMarks ?? null}
       yearGroup={studentSummary?.yearGroup ?? null}
       form={studentSummary?.form ?? null}
+      recentAttendance={attendance?.items ?? null}
     />
   );
 }

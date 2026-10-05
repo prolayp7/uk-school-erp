@@ -3,6 +3,7 @@ const DASHBOARD_DESTINATIONS: Array<{ roles: string[]; path: string }> = [
   { roles: ["HEADTEACHER", "SLT"], path: "/dashboard/headteacher" },
   { roles: ["DSL", "DEPUTY_DSL"], path: "/dashboard/dsl" },
   { roles: ["SENCO", "DEPUTY_SENCO"], path: "/dashboard/senco" },
+  { roles: ["ATTENDANCE_OFFICER"], path: "/attendance" },
   { roles: ["FINANCE", "ADMIN"], path: "/dashboard/finance" },
   { roles: ["MEDICAL"], path: "/dashboard/medical" },
   { roles: ["PARENT"], path: "/parents-and-carers" },

@@ -36,10 +36,33 @@ export type TeacherCurriculumPlan = {
   schemes: Array<{ id: string; title: string; summary: string; sequence: number }>;
 };
 
+export type TeacherAttendanceSummary = {
+  startsOn: string;
+  endsOn: string;
+  classes: Array<{
+    id: string;
+    code: string;
+    yearGroup: { code: string; name: string };
+    subject: { code: string; name: string };
+    totalMarks: number;
+    presentMarks: number;
+    attendanceRate: number | null;
+    pupils: Array<{
+      pupilId: string;
+      admissionNumber: string;
+      name: string;
+      totalMarks: number;
+      presentMarks: number;
+      attendanceRate: number | null;
+    }>;
+  }>;
+};
+
 export type TeacherWorkspaceData = {
   user: CurrentUser;
   classes: TeacherClass[] | null;
   curriculumPlans: TeacherCurriculumPlan[] | null;
+  attendanceSummary: TeacherAttendanceSummary | null;
   academicYear: string | null;
   today: string;
 };
@@ -63,6 +86,7 @@ export function TeacherWorkspace({
   user,
   classes,
   curriculumPlans,
+  attendanceSummary,
   academicYear,
   today,
 }: TeacherWorkspaceData) {
@@ -145,6 +169,51 @@ export function TeacherWorkspace({
             meta={<span>For your assigned subjects and year groups</span>}
           />
         </section>
+
+        <SectionCard
+          icon={<CalendarDays className="h-5 w-5" />}
+          title="Class attendance"
+          subtitle={attendanceSummary ? `Week of ${formatDate(attendanceSummary.startsOn)}` : "Attendance for your assigned classes"}
+          action={attendanceSummary ? <StatusPill tone="info">{attendanceSummary.classes.length} classes</StatusPill> : <StatusPill tone="warning">Data unavailable</StatusPill>}
+        >
+          {attendanceSummary === null ? (
+            <p className="rounded-lg border border-warning-border bg-warning-bg px-3 py-2.5 text-sm text-warning-text">
+              Attendance data could not be loaded for your assigned classes.
+            </p>
+          ) : attendanceSummary.classes.length === 0 ? (
+            <p className="py-2 text-sm text-muted-foreground">No classes are currently assigned to your account.</p>
+          ) : (
+            <div className="divide-y divide-border">
+              {attendanceSummary.classes.map((classSummary) => (
+                <article key={classSummary.id} className="py-3 first:pt-1">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <h3 className="text-sm font-semibold text-foreground">{classSummary.subject.name} · {classSummary.yearGroup.name}</h3>
+                      <p className="mt-0.5 text-xs text-muted-foreground">{classSummary.code} · {classSummary.totalMarks} marks recorded</p>
+                    </div>
+                    <StatusPill tone={classSummary.attendanceRate !== null && classSummary.attendanceRate >= 0.9 ? "success" : "warning"}>
+                      {classSummary.attendanceRate === null ? "No marks" : `${(classSummary.attendanceRate * 100).toFixed(1)}%`}
+                    </StatusPill>
+                  </div>
+                  {classSummary.pupils.length ? (
+                    <div className="mt-3 grid gap-x-5 sm:grid-cols-2">
+                      {classSummary.pupils.slice(0, 6).map((pupil) => (
+                        <div key={pupil.pupilId} className="flex items-center justify-between gap-3 border-t border-border/70 py-2 text-xs">
+                          <span className="min-w-0 truncate text-foreground">{pupil.name}</span>
+                          <span className="shrink-0 tabular-nums text-muted-foreground">
+                            {pupil.attendanceRate === null ? "—" : `${(pupil.attendanceRate * 100).toFixed(1)}%`} · {pupil.totalMarks} marks
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="mt-2 text-xs text-muted-foreground">No pupil attendance marks recorded in this period.</p>
+                  )}
+                </article>
+              ))}
+            </div>
+          )}
+        </SectionCard>
 
         <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)]">
           <SectionCard
