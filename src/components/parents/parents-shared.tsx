@@ -9,7 +9,7 @@ export function ParentsShell({current,children}:{current:string;children:ReactNo
 }
 export function Pill({children,tone="neutral"}:{children:ReactNode;tone?:"neutral"|"brand"|"success"|"warning"|"info"}){return <span className={`pc-pill ${tone}`}>{children}</span>;}
 export function PortalPill({status}:{status:ParentContact["portal"]}){return <Pill tone={status==="Active"?"success":status==="Pending"?"warning":status==="Restricted"?"brand":"neutral"}>{status}</Pill>;}
-export function PersonAvatar({name,large=false}:{name:string;large?:boolean}){return <span className={`pc-avatar ${large?"large":""}`}>{contactInitials(name)}</span>;}
+export function PersonAvatar({name,large=false,photoUrl}:{name:string;large?:boolean;photoUrl?:string}){return <span className={`pc-avatar ${large?"large":""}`}>{photoUrl?<img src={photoUrl} alt="" aria-hidden="true"/>:contactInitials(name)}</span>;}
 export function Panel({title,icon,aside,children,id,className=""}:{title:string;icon?:ReactNode;aside?:ReactNode;children:ReactNode;id?:string;className?:string}){return <section id={id} className={`pc-panel ${className}`}><div className="pc-panel-heading"><h2>{icon}{title}</h2>{aside}</div>{children}</section>;}
 export function Field({label,children,hint}:{label:string;children:ReactNode;hint?:string}){return <label className="pc-field"><span>{label}</span>{children}{hint&&<small>{hint}</small>}</label>;}
 export function Filter({label,value,options,onChange}:{label:string;value:string;options:string[];onChange:(s:string)=>void}){return <label className="pc-filter"><span className="sr-only">{label}</span><select value={value} onChange={e=>onChange(e.target.value)}>{options.map(v=><option key={v}>{v}</option>)}</select></label>;}
