@@ -1,1 +1,13 @@
-# uk-school-erp
+# UK School ERP
+
+Next.js ERP application based on the screens and design system in `uk-school-erp-design`.
+
+## Run locally
+
+1. Start the API in `uk-school-api` on port `3000`.
+2. Copy `.env.example` to `.env.local` and set `API_BASE_URL` to the API's versioned base URL.
+3. Run `pnpm install`, then start the ERP with `pnpm dev --port 3001`.
+
+The sign-in page sends credentials from the browser to a same-origin Next.js route handler. That handler calls the API and stores its session token in an HttpOnly, SameSite=Lax cookie; the token is never returned to browser JavaScript. Protected ERP pages validate the token against `GET /api/v1/erp/me`, and sign-out revokes it through the API.
+
+The API currently stores sessions in process memory. Sessions are therefore invalidated when the API process restarts and are not shared between API instances; production deployment needs a shared persistent session store.

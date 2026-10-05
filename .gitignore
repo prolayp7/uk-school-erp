@@ -22,3 +22,19 @@ lerna-debug.log*
 # temp directory
 .temp
 .tmp
+
+# Next.js
+/.next/
+/out/
+/.vercel/
+*.tsbuildinfo
+next-env.d.ts
+
+# local environment overrides
+.env.local
+.env.*.local
+
+
+# markdown files
+*.md
+!README.md
