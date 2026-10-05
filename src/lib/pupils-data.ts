@@ -22,6 +22,7 @@ export type Pupil = {
   preferredName?: string;
   pronoun: string;
   initials: string;
+  photoUrl?: string;
   upn: string;
   admissionNo: string;
   dob: string;
@@ -50,6 +51,7 @@ export const PUPILS: Pupil[] = [
     legalSurname: "Turner",
     pronoun: "He/Him",
     initials: "LT",
+    photoUrl: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=160&h=160&q=80",
     upn: "W801202319044",
     admissionNo: "2019-0412",
     dob: "14/03/2010",
@@ -189,6 +191,7 @@ export const PUPILS: Pupil[] = [
     legalSurname: "Turner",
     pronoun: "He/Him",
     initials: "JT",
+    photoUrl: "https://images.unsplash.com/photo-1503919005314-30d93d07d823?auto=format&fit=crop&w=160&h=160&q=80",
     upn: "W801202521099",
     admissionNo: "2021-0387",
     dob: "22/06/2012",

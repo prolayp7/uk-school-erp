@@ -20,8 +20,9 @@ export type ContactEvent = { id: string; kind: "Email draft" | "Call" | "Note" |
 export type ParentContact = {
   id: string; name: string; title: string; email: string; mobile: string; landline: string;
   address: string; postcode: string; portal: "Active" | "Pending" | "Not invited" | "Restricted";
-  mobileVerified: boolean; lastLogin: string; employer: string; links: PupilLink[]; events: ContactEvent[];
+  mobileVerified: boolean; lastLogin: string; employer: string; photoUrl?: string; links: PupilLink[]; events: ContactEvent[];
 };
+export const DEFAULT_SARAH_PHOTO_URL = "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=240&q=80";
 export const defaultLink = (pupilId = ""): PupilLink => ({
   pupilId, relationship: "Mother", priority: "1", responsibility: true,
   verification: "Pending review", basis: "Awaiting evidence", inspectionDate: "",

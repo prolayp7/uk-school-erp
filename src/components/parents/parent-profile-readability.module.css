@@ -1,0 +1,72 @@
+:global(.pc-profile-layout .pc-contact-channel small) {
+  font-size: 12px;
+}
+
+:global(.pc-profile-layout .pc-contact-channel a),
+:global(.pc-profile-layout .pc-contact-channel strong) {
+  font-size: 14px;
+}
+
+:global(.pc-profile-layout .pc-contact-channel span) {
+  font-size: 12px;
+}
+
+:global(.pc-profile-layout .pc-key-values) {
+  font-size: 13px;
+}
+
+:global(.pc-profile-layout .pc-key-values .pc-pill) {
+  font-size: 11px;
+}
+
+:global(.pc-profile-layout .pc-soft-block) {
+  font-size: 13px;
+}
+
+:global(.pc-profile-layout .pc-soft-block small) {
+  font-size: 12px;
+}
+
+:global(.pc-profile-layout .pc-soft-block strong) {
+  font-size: 14px;
+}
+
+:global(.pc-profile-layout .pc-soft-block p) {
+  font-size: 12px;
+}
+
+:global(.pc-profile-layout .pc-section-description) {
+  font-size: 13px;
+}
+
+:global(.pc-profile-layout .pc-legal-record > strong) {
+  font-size: 14px;
+}
+
+:global(.pc-profile-layout .pc-legal-grid small) {
+  font-size: 12px;
+}
+
+:global(.pc-profile-layout .pc-legal-grid strong) {
+  font-size: 13px;
+}
+
+:global(.pc-profile-layout .pc-legal-grid p) {
+  font-size: 12px;
+}
+
+:global(.pc-profile-layout .pc-history strong) {
+  font-size: 13px;
+}
+
+:global(.pc-profile-layout .pc-history time) {
+  font-size: 11px;
+}
+
+:global(.pc-profile-layout .pc-history p) {
+  font-size: 13px;
+}
+
+:global(.pc-profile-layout .pc-history small) {
+  font-size: 12px;
+}

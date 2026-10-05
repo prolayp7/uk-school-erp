@@ -4,6 +4,7 @@ const DASHBOARD_DESTINATIONS: Array<{ roles: string[]; path: string }> = [
   { roles: ["DSL", "DEPUTY_DSL"], path: "/dashboard/dsl" },
   { roles: ["SENCO", "DEPUTY_SENCO"], path: "/dashboard/senco" },
   { roles: ["ATTENDANCE_OFFICER"], path: "/attendance" },
+  { roles: ["HEADTEACHER", "SLT", "ADMIN", "TEACHER", "DSL", "DEPUTY_DSL", "SENCO", "DEPUTY_SENCO"], path: "/dashboard/behaviour" },
   { roles: ["FINANCE", "ADMIN"], path: "/dashboard/finance" },
   { roles: ["MEDICAL"], path: "/dashboard/medical" },
   { roles: ["PARENT"], path: "/parents-and-carers" },

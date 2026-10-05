@@ -21,6 +21,15 @@ export type StudentWorkspaceData = {
     session: { sessionDate: string; sessionType: string };
     code: { description: string; markType: string };
   }> | null;
+  timetable?: Array<{
+    dayOfWeek: number;
+    startsAt: string;
+    endsAt: string;
+    room: string | null;
+    classCode: string;
+    yearGroup: string;
+    subject: { code: string; name: string };
+  }> | null;
 };
 
 function formatDate(value: string): string {
@@ -48,12 +57,14 @@ export function StudentWorkspace({
   yearGroup,
   form,
   recentAttendance,
+  timetable,
 }: StudentWorkspaceData) {
   const school = user.schools[0];
   const displayName = accountName(user.email);
   const firstName = displayName.split(" ")[0] || "Student";
   const attendanceDisplay = typeof attendanceRate === "number" ? `${attendanceRate.toFixed(1)}%` : "—";
   const attendanceMeta = totalMarks ? `${presentMarks ?? 0} of ${totalMarks} marks recorded as present` : "Secure attendance record unavailable";
+  const days = ["", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
   return (
     <AppShell
@@ -192,6 +203,31 @@ export function StudentWorkspace({
                       {formatDate(record.session.sessionDate.slice(0, 10))}
                     </time>
                   </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </SectionCard>
+
+        <SectionCard
+          icon={<CalendarDays className="h-5 w-5" />}
+          title="My timetable"
+          subtitle="Current classes from your school timetable"
+        >
+          {timetable === null || timetable === undefined ? (
+            <p className="py-2 text-sm text-muted-foreground">Your timetable is currently unavailable.</p>
+          ) : timetable.length === 0 ? (
+            <p className="py-2 text-sm text-muted-foreground">No current timetable has been published for your classes.</p>
+          ) : (
+            <div className="divide-y divide-border">
+              {timetable.map((slot, index) => (
+                <div key={`${slot.dayOfWeek}-${slot.startsAt}-${slot.classCode}-${index}`} className="grid grid-cols-[minmax(78px,0.45fr)_minmax(0,1fr)_auto] items-center gap-3 py-2.5 text-sm">
+                  <time className="tabular-nums text-muted-foreground">{slot.startsAt}–{slot.endsAt}</time>
+                  <div className="min-w-0">
+                    <p className="truncate font-medium text-foreground">{slot.subject.name}</p>
+                    <p className="text-xs text-muted-foreground">{days[slot.dayOfWeek]} · Year {slot.yearGroup} · {slot.classCode}</p>
+                  </div>
+                  <span className="text-xs text-muted-foreground">{slot.room ?? "—"}</span>
                 </div>
               ))}
             </div>

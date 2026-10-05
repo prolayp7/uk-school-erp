@@ -15,3 +15,5 @@ The API currently stores sessions in process memory. Sessions are therefore inva
 ## Attendance workflow
 
 The `/attendance` workspace is available to attendance officers, leadership/admin, and teachers. Staff can open morning/afternoon registers or lesson sessions, record configured attendance codes and absence reasons, and save audited batches. Teacher class groups, register pupils, and attendance reports are limited by the API to the teacher's assignments. Headteacher reports support a selected date with daily, weekly, monthly, year-group, form, and year-to-date persistent-absence views. Parent and student portals show only their scoped attendance summaries and recent marks.
+
+Sprint 3 is underway. The parent portal supports a child switcher and displays only the selected child's current timetable and attendance updates. The student workspace displays the timetable resolved for the signed-in student's own record. Homework, assignments, school notices, messaging, consent, and achievement/behaviour summaries are not implemented yet.
